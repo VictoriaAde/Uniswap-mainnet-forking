@@ -13,7 +13,7 @@ const main = async () => {
   const impersonatedSigner = await ethers.getImpersonatedSigner(USDCHolder);
   // await impersonatedSigner.sendTransaction(...);
 
-  const amountOut = ethers.parseUnits("2000", 6);
+  const amountOut = ethers.parseUnits("1000", 6);
   const amountIn = ethers.parseEther("1");
 
   const USDC = await ethers.getContractAt("IERC20", USDCAddress);

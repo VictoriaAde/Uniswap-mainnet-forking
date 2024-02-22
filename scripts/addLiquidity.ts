@@ -10,21 +10,25 @@ const main = async () => {
 
   const impersonatedSigner = await ethers.getImpersonatedSigner(USDCHolder);
 
-  const amountMinUSDC = ethers.parseUnits("100", 6);
-  const amountMinDAI = ethers.parseUnits("200", 6);
-  const amountDesUSDC = ethers.parseUnits("300", 6);
-  const amountDesDAI = ethers.parseUnits("500", 6);
+  const amountDesUSDC = ethers.parseUnits("1000", 6);
+  const amountDesDAI = ethers.parseUnits("500", 18);
 
   const USDC = await ethers.getContractAt("IERC20", USDCAddress);
   const DAI = await ethers.getContractAt("IERC20", DAIAddress);
 
   const ROUTER = await ethers.getContractAt("IUniswap", UNIRouter);
 
-  //   const approveTx = await USDC.connect(impersonatedSigner).approve(
-  //     UNIRouter,
-  //     amountOut
-  //   );
-  //   await approveTx.wait();
+  const approveTx = await USDC.connect(impersonatedSigner).approve(
+    ROUTER,
+    amountDesUSDC
+  );
+  await approveTx.wait();
+
+  const approveTx2 = await DAI.connect(impersonatedSigner).approve(
+    ROUTER,
+    amountDesDAI
+  );
+  await approveTx2.wait();
 
   const usdcBal = await USDC.balanceOf(impersonatedSigner.address);
   const daiBal = await DAI.balanceOf(impersonatedSigner.address);
@@ -39,8 +43,8 @@ const main = async () => {
     DAIAddress,
     amountDesUSDC,
     amountDesDAI,
-    amountMinUSDC,
-    amountMinDAI,
+    1,
+    1,
     impersonatedSigner.address,
     deadline
   );
@@ -62,13 +66,6 @@ const main = async () => {
     "dai balance after swap",
     ethers.formatUnits(daiBalAfterSwap, 18)
   );
-
-  /*
-
-    console.log("usdc balance before swap", Number(usdcBal._hex));
-    // console.log("weth balance before swap", Number(wethBal._hex));
-    console.log("eth balance before swap", Number(ethBal._hex));
-    */
 };
 
 main().catch((error) => {
